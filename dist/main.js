@@ -11,10 +11,12 @@ const error_1 = require("./common/utility/error");
 const env_service_1 = require("./config/env.service");
 const database_connection_1 = require("./database/database.connection");
 const redis_service_1 = require("./common/service/redis.service");
+const user_controller_1 = __importDefault(require("./module/user/user.controller"));
 exports.app = (0, express_1.default)();
 exports.app.use((0, cors_1.default)({ origin: "*" }));
 exports.app.use(express_1.default.json());
 exports.app.use("/auth", auth_controller_1.default);
+exports.app.use("/user", user_controller_1.default);
 exports.app.get("/health", (_req, res) => {
     res.json({ status: "ok" });
 });

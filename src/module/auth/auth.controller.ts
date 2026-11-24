@@ -33,4 +33,28 @@ router.post(
   },
 );
 
+router.post("/refreshToken", async (req: Request, res: Response) => {
+  const data = await authService.refreshToken(req.body);
+
+  successResponse({
+    res,
+    message: "new token is generated",
+    data,
+  });
+});
+
+router.post("/google", async (req: Request, res: Response) => {
+  const { idToken } = req.body;
+  const data = await authService.googleLogin(idToken);
+
+  successResponse({
+    res,
+    message: "Logged in with Google successfully",
+    statusCode: 200,
+    data,
+  });
+});
+
 export default router;
+
+

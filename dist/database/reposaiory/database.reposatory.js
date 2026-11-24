@@ -10,7 +10,7 @@ class DatabaseRepository {
         return this.model.create(data);
     }
     findOne({ filter, select, populate, }) {
-        let query = this.model.findOne({ filter });
+        let query = this.model.findOne(filter);
         if (select) {
             query = query.select(select);
         }
@@ -20,7 +20,7 @@ class DatabaseRepository {
         return query;
     }
     findAll({ filter, select, populate, }) {
-        let query = this.model.find({ filter });
+        let query = this.model.find(filter);
         if (select) {
             query = query.select(select);
         }

@@ -4,11 +4,12 @@ export interface IUser {
   _id?: string;
   name: string;
   email: string;
-  password: string;
+  password?: string;
   confirmPassword?: string | undefined;
   age?: number | undefined;
   gender?: string | undefined;
   isVerified?: boolean;
-  phone: string;
+  phone?: string;
   role?: UserEnum
+  googleId?:string | undefined
 }

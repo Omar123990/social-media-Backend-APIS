@@ -3,9 +3,14 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.userModel = void 0;
+exports.userModel = exports.UserEnum = void 0;
 const mongoose_1 = __importDefault(require("mongoose"));
 const zod_1 = require("zod");
+var UserEnum;
+(function (UserEnum) {
+    UserEnum[UserEnum["Admin"] = 0] = "Admin";
+    UserEnum[UserEnum["User"] = 1] = "User";
+})(UserEnum || (exports.UserEnum = UserEnum = {}));
 const userSchema = new mongoose_1.default.Schema({
     name: {
         type: String,
@@ -29,6 +34,11 @@ const userSchema = new mongoose_1.default.Schema({
     isVerified: {
         type: zod_1.boolean,
         default: false,
+    },
+    role: {
+        type: Number,
+        enum: UserEnum,
+        default: UserEnum.User,
     },
 });
 exports.userModel = mongoose_1.default.model("user", userSchema);

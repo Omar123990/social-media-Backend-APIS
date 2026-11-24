@@ -21,6 +21,27 @@ class RedisService {
         this.client.connect();
         console.log("redis connected");
     }
+    get(key) {
+        return this.client.get(key);
+    }
+    set(key, value, EX) {
+        return this.client.set(key, value, { EX: EX });
+    }
+    del(key) {
+        return this.client.del(key);
+    }
+    expire(key, time) {
+        return this.client.expire(key, time);
+    }
+    ttl(key) {
+        return this.client.ttl(key);
+    }
+    incr(key) {
+        return this.client.incr(key);
+    }
+    decr(key) {
+        return this.client.decr(key);
+    }
 }
 exports.RedisService = RedisService;
 exports.redisService = new RedisService();

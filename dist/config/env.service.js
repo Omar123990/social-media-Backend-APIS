@@ -20,6 +20,7 @@ const emailService = process.env.EMAIL_SERVICE;
 const emailPassword = process.env.EMAIL_PASSWORD;
 const redisUrl = process.env.REDIS_URL;
 const mood = process.env.MOOD;
+const google = process.env.GOOGLE_CLIENT_ID;
 exports.env = {
     port,
     databaseUrl,
@@ -34,4 +35,5 @@ exports.env = {
     emailService,
     emailPassword,
     redisUrl,
+    google,
 };

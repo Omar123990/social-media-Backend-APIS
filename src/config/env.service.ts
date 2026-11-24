@@ -16,7 +16,7 @@ const emailService = process.env.EMAIL_SERVICE as string;
 const emailPassword = process.env.EMAIL_PASSWORD as string;
 const redisUrl = process.env.REDIS_URL as string;
 const mood = process.env.MOOD as string;
-
+const google = process.env.GOOGLE_CLIENT_ID as string;
 export let env = {
   port,
   databaseUrl,
@@ -31,4 +31,5 @@ export let env = {
   emailService,
   emailPassword,
   redisUrl,
+  google,
 };

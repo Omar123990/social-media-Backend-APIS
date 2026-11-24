@@ -5,6 +5,7 @@ const successResponse = ({ res, message = "Operation successful", statusCode = 2
     res.status(statusCode).json({
         status: "success",
         message,
+        data,
     });
 };
 exports.successResponse = successResponse;

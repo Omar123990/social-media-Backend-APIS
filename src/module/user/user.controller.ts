@@ -25,8 +25,24 @@ router.post(
       res,
       message: "USER VERIFIED",
       statusCode: 201,
-      data
+      data,
     });
   },
 );
+router.post("/resetPassword", async (req: Request, res: Response) => {
+  let data = await User.resetPassword(req.body.email);
+  successResponse({
+    res,
+    message: data,
+    statusCode: 201,
+  });
+});
+router.post("/confirmResetPassword", async (req: Request, res: Response) => {
+  let data = await User.confirmResetPassword(req.body);
+  successResponse({
+    res,
+    message: data,
+    statusCode: 201,
+  });
+});
 export default router;

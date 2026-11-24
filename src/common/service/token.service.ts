@@ -64,7 +64,7 @@ export const auth: RequestHandler = (
   }
 };
 
-export const generateToken = (user: IUser) => {
+export const generateToken = (user: Pick<IUser, "role"> & { _id: unknown }) => {
   switch (user.role) {
     case 0: {
       let token = jwt.sign({ id: user._id }, env.adminTokenKey, {
