@@ -39,4 +39,29 @@ router.post("/confirmResetPassword", async (req, res) => {
         statusCode: 201,
     });
 });
+router.put("/changePrivateSetting", token_service_1.auth, async (req, res) => {
+    let data = await user_service_1.User.changePrivateSetting(req.userId);
+    (0, success_response_1.successResponse)({
+        res,
+        data,
+        message: "user's private setting is updated!",
+    });
+});
+router.put("/updateData", token_service_1.auth, async (req, res) => {
+    let data = await user_service_1.User.updata(req.userId, req.body);
+    (0, success_response_1.successResponse)({
+        res,
+        message: "user updated successfully",
+        data,
+    });
+});
+router.get("/searchUser", token_service_1.auth, async (req, res) => {
+    const userName = req.query.userName;
+    const data = await user_service_1.User.searchUser(req.userId, userName);
+    (0, success_response_1.successResponse)({
+        res,
+        message: "Users fetched successfully",
+        data,
+    });
+});
 exports.default = router;

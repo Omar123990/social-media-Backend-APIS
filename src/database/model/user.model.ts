@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 import { IUser } from "../../common/types/user.type";
-import { boolean } from "zod";
+import { boolean, string } from "zod";
 
 export enum UserEnum {
   Admin,
@@ -35,6 +35,23 @@ const userSchema = new mongoose.Schema<IUser>({
     type: Number,
     enum: UserEnum,
     default: UserEnum.User,
+  },
+  isPrivate: {
+    type: Boolean,
+    default: false,
+  },
+  avatar: {
+    type: String,
+  },
+  bio: {
+    type: String,
+  },
+  userName: {
+    type: String,
+    unique: true,
+    required: true,
+    trim: true,
+    lowercase: true,
   },
 });
 

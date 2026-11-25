@@ -52,7 +52,16 @@ class AuthService {
     };
   }
   public async signup(data: IUser): Promise<SignupResponse> {
-    let { phone, email, name, password, confirmPassword, age, gender } = data;
+    let {
+      phone,
+      email,
+      name,
+      password,
+      userName,
+      confirmPassword,
+      age,
+      gender,
+    } = data;
     if (!password || !confirmPassword) {
       throw new BadRequestException("Password and confirmation are required");
     }
@@ -66,6 +75,12 @@ class AuthService {
     if (existedUser) {
       throw new ConflictException("User already exists");
     }
+    let checkUserName = await this.authRepository.findOne({
+      filter: { userName },
+    });
+    if (checkUserName) {
+      throw new ConflictException("someone has the same user name");
+    }
     let hashedPassword = await generateHash({ planText: password });
     if (!hashedPassword) {
       throw new BadRequestException("something went wrong");
@@ -78,6 +93,7 @@ class AuthService {
       age,
       phone,
       gender,
+      userName,
     });
     await redisService.set(`otp::${user._id}`, otp, 5 * 60);
     await sendEmail({
@@ -129,6 +145,7 @@ class AuthService {
           ? { isVerified: googleUser.emailVerified }
           : {}),
         role: 1,
+        userName: googleUser.name,
       };
 
       user = await this.authRepository.create(newUserData);

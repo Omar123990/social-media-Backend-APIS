@@ -17,7 +17,10 @@ class UserService {
   }
 
   public async getUserById(id: string) {
-    let user = this.userRepo.findOne({ filter: { _id: id } });
+    const user = await this.userRepo.findOne({
+      filter: { _id: id },
+      select: "-password",
+    });
     if (!user) {
       throw new NotFoundException("user not found");
     }
@@ -85,6 +88,71 @@ class UserService {
     );
     await redisService.del(`otp::${user._id}`);
     return "Password is UPDATED!";
+  }
+  public async changePrivateSetting(userId: string) {
+    let user = await this.userRepo.findOne({ filter: { _id: userId } });
+    if (!user) {
+      throw new NotFoundException("something wrong, user is not found");
+    }
+
+    user.isPrivate = !user.isPrivate;
+    await user.save();
+
+    return {
+      isPrivate: user.isPrivate,
+    };
+  }
+
+  public async updata(userId: string, updatedData: IUser) {
+    let checkedUser = await this.userRepo.findOne({
+      filter: { _id: userId },
+    });
+    if (!checkedUser) {
+      throw new NotFoundException("user is not found");
+    }
+    let { name, email, age, bio, gender, phone } = updatedData;
+    let updatedUser = await this.userRepo.updateOne(
+      { _id: userId },
+      { name, email, age, bio, gender, phone },
+    );
+    if (!updatedUser) {
+      throw new BadRequestException("can't update user");
+    }
+    return "user updated successfully";
+  }
+
+  public async searchUser(currentUserId: string, userName: string) {
+    if (!userName || !userName.trim()) {
+      throw new BadRequestException("userName is required");
+    }
+
+    const currentUser = await this.userRepo.findOne({
+      filter: { _id: currentUserId },
+    });
+
+    if (!currentUser) {
+      throw new NotFoundException("user not found");
+    }
+
+    const cleanUserName = userName.trim().toLowerCase();
+
+    if (currentUser.userName?.toLowerCase() === cleanUserName) {
+      throw new BadRequestException("you're searching about yourself idiot");
+    }
+
+    const users = await this.userRepo.findAll({
+      filter: {
+        userName: { $regex: cleanUserName, $options: "i" },
+        _id: { $ne: currentUserId },
+      },
+      select: "name userName avatar bio isPrivate",
+    });
+
+    if (!users.length) {
+      throw new NotFoundException("no users found");
+    }
+
+    return users;
   }
 }
 

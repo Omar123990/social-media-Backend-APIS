@@ -40,5 +40,22 @@ const userSchema = new mongoose_1.default.Schema({
         enum: UserEnum,
         default: UserEnum.User,
     },
+    isPrivate: {
+        type: Boolean,
+        default: false,
+    },
+    avatar: {
+        type: String,
+    },
+    bio: {
+        type: String,
+    },
+    userName: {
+        type: String,
+        unique: true,
+        required: true,
+        trim: true,
+        lowercase: true,
+    },
 });
 exports.userModel = mongoose_1.default.model("user", userSchema);

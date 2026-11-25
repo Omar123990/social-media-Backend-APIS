@@ -13,7 +13,10 @@ class UserService {
         this.userRepo = new database_reposatory_1.DatabaseRepository(user_model_1.userModel);
     }
     async getUserById(id) {
-        let user = this.userRepo.findOne({ filter: { _id: id } });
+        const user = await this.userRepo.findOne({
+            filter: { _id: id },
+            select: "-password",
+        });
         if (!user) {
             throw new error_exception_1.NotFoundException("user not found");
         }
@@ -66,6 +69,57 @@ class UserService {
         let updatedPassword = await this.userRepo.updateOne({ _id: user.id }, { $set: { password: hashedPassword } });
         await redis_service_1.redisService.del(`otp::${user._id}`);
         return "Password is UPDATED!";
+    }
+    async changePrivateSetting(userId) {
+        let user = await this.userRepo.findOne({ filter: { _id: userId } });
+        if (!user) {
+            throw new error_exception_1.NotFoundException("something wrong, user is not found");
+        }
+        user.isPrivate = !user.isPrivate;
+        await user.save();
+        return {
+            isPrivate: user.isPrivate,
+        };
+    }
+    async updata(userId, updatedData) {
+        let checkedUser = await this.userRepo.findOne({
+            filter: { _id: userId },
+        });
+        if (!checkedUser) {
+            throw new error_exception_1.NotFoundException("user is not found");
+        }
+        let { name, email, age, bio, gender, phone } = updatedData;
+        let updatedUser = await this.userRepo.updateOne({ _id: userId }, { name, email, age, bio, gender, phone });
+        if (!updatedUser) {
+            throw new error_exception_1.BadRequestException("can't update user");
+        }
+        return "user updated successfully";
+    }
+    async searchUser(currentUserId, userName) {
+        if (!userName || !userName.trim()) {
+            throw new error_exception_1.BadRequestException("userName is required");
+        }
+        const currentUser = await this.userRepo.findOne({
+            filter: { _id: currentUserId },
+        });
+        if (!currentUser) {
+            throw new error_exception_1.NotFoundException("user not found");
+        }
+        const cleanUserName = userName.trim().toLowerCase();
+        if (currentUser.userName?.toLowerCase() === cleanUserName) {
+            throw new error_exception_1.BadRequestException("you're searching about yourself idiot");
+        }
+        const users = await this.userRepo.findAll({
+            filter: {
+                userName: { $regex: cleanUserName, $options: "i" },
+                _id: { $ne: currentUserId },
+            },
+            select: "name userName avatar bio isPrivate",
+        });
+        if (!users.length) {
+            throw new error_exception_1.NotFoundException("no users found");
+        }
+        return users;
     }
 }
 exports.User = new UserService();

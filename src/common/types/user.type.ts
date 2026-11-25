@@ -10,6 +10,10 @@ export interface IUser {
   gender?: string | undefined;
   isVerified?: boolean;
   phone?: string;
-  role?: UserEnum
-  googleId?:string | undefined
+  role?: UserEnum;
+  googleId?: string | undefined;
+  isPrivate?: boolean;
+  avatar?: string;
+  bio?: string;
+  userName: string ;
 }

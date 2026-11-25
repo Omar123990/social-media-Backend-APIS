@@ -42,7 +42,7 @@ class AuthService {
         };
     }
     async signup(data) {
-        let { phone, email, name, password, confirmPassword, age, gender } = data;
+        let { phone, email, name, password, userName, confirmPassword, age, gender, } = data;
         if (!password || !confirmPassword) {
             throw new error_exception_1.BadRequestException("Password and confirmation are required");
         }
@@ -56,6 +56,12 @@ class AuthService {
         if (existedUser) {
             throw new error_exception_1.ConflictException("User already exists");
         }
+        let checkUserName = await this.authRepository.findOne({
+            filter: { userName },
+        });
+        if (checkUserName) {
+            throw new error_exception_1.ConflictException("someone has the same user name");
+        }
         let hashedPassword = await (0, encreption_service_1.generateHash)({ planText: password });
         if (!hashedPassword) {
             throw new error_exception_1.BadRequestException("something went wrong");
@@ -68,6 +74,7 @@ class AuthService {
             age,
             phone,
             gender,
+            userName,
         });
         await redis_service_1.redisService.set(`otp::${user._id}`, otp, 5 * 60);
         await (0, sendEmail_service_1.sendEmail)({
@@ -110,6 +117,7 @@ class AuthService {
                     ? { isVerified: googleUser.emailVerified }
                     : {}),
                 role: 1,
+                userName: googleUser.name,
             };
             user = await this.authRepository.create(newUserData);
         }
